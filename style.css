@@ -1,0 +1,19 @@
+#home{
+    margin: 2%;
+    background-image: url("assets/homeBg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+}
+
+#regSch{
+    margin: 2%;
+    background-image: url("assets/regSchBg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+
+hr{
+    width: 70%;
+}
