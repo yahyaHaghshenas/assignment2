@@ -1,11 +1,19 @@
-body{
+#home{
     margin: 2%;
-    background-image: url("assets/bg.jpg");
+    background-image: url("assets/homeBg.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     color: white;
 }
 
-#volReg{
+#regSch{
+    margin: 2%;
+    background-image: url("assets/regSchBg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
     
+}
+
+hr{
+    width: 70%;
 }

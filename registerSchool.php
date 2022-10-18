@@ -7,19 +7,16 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 
-<link rel="stylesheet" href="">
+<link rel="stylesheet" href="style.css">
 <style>
 </style>
 <script src=""></script>
-<body>
+<body id="regSch">
+    
     <div class="container">
-
-        <div>
-            <div class="">
-            <h1>Register Schools and their Administrators Here</h1>
-            <br>
-            <br>
-            </div>
+        <br>
+        <br>
+        <form>
             <div id="schoolInfo">
                 <h3>School Information</h3>
                 <form method="post" action="reg_school_admin">
@@ -31,18 +28,17 @@
                         </div>    
                     </div>    
                     <div class="row">
-                        <label class="col-sm-1 col-form-label" for="schoolAddress">Address:</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control"id="schoolAddress" name="schoolAddress" ><br>
-                        </div>    
-                    </div> 
-                    <div class="row">
                         <label class="col-sm-1 col-form-label" for="schoolCity">City:</label>
                         <div class="col-sm-3">
                             <input type="text" class="form-control"id="schoolCity" name="schoolCity" ><br>
                         </div>    
                     </div>
-                
+                    <div class="row">
+                        <label class="col-sm-1 col-form-label" for="schoolAddress">Address:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control"id="schoolAddress" name="schoolAddress" ><br>
+                        </div>    
+                    </div> 
             </div>
             <hr>
             <div id="adminInfo">
@@ -89,8 +85,10 @@
             <br>
             <hr>
             <br>
-            <button type="submit" class="btn btn-primary btn-lg" id="regSchSubmit">SUBMIT</button>
-        </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary btn-lg" id="regSchSubmit">SUBMIT</button>
+            </div>
+        </form>
     </div>
     
 </body>
