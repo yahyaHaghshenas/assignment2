@@ -1,4 +1,36 @@
-<?php include('server.php') ?>
+<?php
+$error = "";
+if (isset($_POST['login'])) {
+    function validate($data){
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+    $username = validate($_POST['username']);
+    $password = validate($_POST['password']);
+    if (empty($username) || empty($password)) {
+        $error = "Username & Password shoud not be empty!";
+    } else {
+        // populate the db user & pass based on your db account
+        $dbUser = 'root';
+        $dbPass = '';
+        // connect to database
+        $db = mysqli_connect('localhost', $dbUser, $dbPass, 'vms');
+		$password = md5($password);
+		$query = "SELECT * FROM `admin` WHERE adminUsername='$username' AND adminPassword='$password' AND `isSuperAdmin`=1;";
+		$results = mysqli_query($db, $query);
+
+        if (mysqli_num_rows($results) == 1) {
+            header("Location: registerSchool.php?");
+        } else {
+            $error = "Wrong Username or Password!";
+        }
+    }
+} else if (isset($_POST['logout'])) {
+    $error = "";
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
   <meta charset="UTF-8" />
@@ -33,11 +65,14 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <?php if (empty($error) == false) : ?>
+            <div class="error text-danger"><?php echo $error ?></div>
+          <?php endif ?>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item"></li>
           </ul>
           
-          <form class="d-flex">
+          <form method="post" action="index.php" class="d-flex" >
                 <input
                   type="text"
                   class="form-control me-2"
@@ -53,9 +88,15 @@
                   placeholder="********"
                 />
               </div>
-              <a type="submit" class="btn btn-primary" id="login" name="login" href="registerSchool.php">
+              
+              <input
+                    class="form-control d-none"
+                    id="login"
+                    name="login"
+                />
+              <button type="submit" class="btn btn-primary" id="login" name="login">
                 Login
-                </a>
+              </button>
           </form>
           
         </div>
