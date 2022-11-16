@@ -1,5 +1,20 @@
+html, body {    
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+footer {
+    background-color: gray;
+    /* position: fixed; */
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
 #home{
-    margin: 2%;
+    margin: 0;
+    height: 100%;
     background-image: url("assets/homeBg.jpg");
     background-repeat: no-repeat;
     background-size: cover;
@@ -16,4 +31,44 @@
 
 hr{
     width: 70%;
+}
+
+form{
+    color: black;
+}
+
+.card {
+    height: 100%;
+}
+
+.card > .card-body {
+    display: grid;
+}
+
+.card > .card-body > a {
+    margin: auto 10%;
+}
+
+.breadcrumb-content {
+    color: white;
+    font-size: large;
+}
+
+.navbar-brand {
+    color: rgb(229, 226, 226) !important;
+    font-size: medium;
+}
+
+.key-value {
+    display: flex;
+}
+
+.key-value > div {
+    width: 50%;
+    text-align: end;
+}
+
+.key-value > div:last-child {
+    padding-left: 20px;
+    text-align: start;
 }

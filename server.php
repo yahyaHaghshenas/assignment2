@@ -27,9 +27,8 @@ $query = "SELECT sch.`schoolName` school, CONCAT(sch.`city`, ', ',  sch.`address
 	FROM vms.`school` sch LEFT JOIN vms.`admin` ad ON sch.`schoolID` = ad.`adminSchoolID` WHERE ad.`isSuperAdmin`=0;";
 $results = mysqli_query($db, $query);
 
-if (mysqli_num_rows($results) > 0 ) {
-	$_SESSION = $results;//->fetch_array(MYSQLI_ASSOC);
-
+if (mysqli_num_rows($results) > 0) {
+	$_SESSION = $results;
 }
 
 // REGISTER USER
@@ -59,11 +58,13 @@ if (isset($_POST['register'])) {
 	if (count($errors) == 0) {
 		$query = "INSERT INTO `school` (schoolName, `address`, city) 
 					VALUES('$schoolName', '$schoolAddress', '$schoolCity')";
-		mysqli_query($db, $query);
+		if (!$db->query($query)) {
+			array_push($errors,  $db->error);
+		}
 		$id = mysqli_insert_id($db);
 	}
 	if ($id == 0) {
-		array_push($errors, $schoolName." has been already registered! ($schoolAddress)");
+		array_push($errors, $schoolName . " has been already registered! ($schoolAddress)");
 	} else {
 		// ____________ admin ____________
 		$password = mysqli_real_escape_string($db, $_POST['adminPassword']);
@@ -73,7 +74,7 @@ if (isset($_POST['register'])) {
 		$position = mysqli_real_escape_string($db, $_POST['position']);
 		$phone = mysqli_real_escape_string($db, $_POST['adminPhone']);
 		$email = mysqli_real_escape_string($db, $_POST['adminEmail']);
-		$schoolID = 101;// mysqli_real_escape_string($db, $_POST['adminSchoolID']);
+		$schoolID = 101; // mysqli_real_escape_string($db, $_POST['adminSchoolID']);
 
 		// form validation: ensure that the form is correctly filled
 		$errors = [];
@@ -106,8 +107,10 @@ if (isset($_POST['register'])) {
 			$password = md5($password); //encrypt the password before saving in the database
 			$query = "INSERT INTO `admin` (adminUsername, adminPassword, adminFullname, staffID, position, adminPhone, adminEmail, adminSchoolID) 
 						VALUES('$username', '$password', '$fullname', '$staffID', '$position', '$phone', '$email', '$id')";
-			mysqli_query($db, $query);
-			
+			if (!$db->query($query)) {
+				array_push($errors,  $db->error);
+			}
+
 
 
 			$errors = [];
@@ -116,12 +119,12 @@ if (isset($_POST['register'])) {
 				ad.`adminFullname` fullname, ad.`staffID`, ad.`position`, ad.`adminPhone` phone, ad.`adminEmail` email 
 				FROM vms.`school` sch LEFT JOIN vms.`admin` ad ON sch.`schoolID` = ad.`adminSchoolID`;";
 			$results = mysqli_query($db, $query);
-		
-			if (mysqli_num_rows($results) > 0 ) {
-				$_SESSION = $results;//->fetch_array(MYSQLI_ASSOC);
+
+			if (mysqli_num_rows($results) > 0) {
+				$_SESSION = $results; //->fetch_array(MYSQLI_ASSOC);
 			}
-			
-		}}
+		}
 	}
+}
 
 ?>

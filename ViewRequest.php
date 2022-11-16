@@ -1,3 +1,85 @@
+<?php
+$errors = [];
+$_SESSION = [];
+
+// populate the db user & pass based on your db account
+$dbUser = 'root';
+$dbPass = '';
+// connect to database
+$db = mysqli_connect('localhost', $dbUser, $dbPass, 'vms');
+
+$adminFullname = "";
+$schoolName = "";
+$adminSchoolID = -1;
+if (isset($_GET['adminSchoolID'])) {
+    $adminFullname = $_GET['adminFullname'];
+    $schoolName = $_GET['schoolName'];
+    $adminSchoolID = $_GET['adminSchoolID'];
+} else if (isset($_POST['adminSchoolID'])) {
+    $adminFullname = $_POST['adminFullname'];
+    $schoolName = $_POST['schoolName'];
+    $adminSchoolID = $_POST['adminSchoolID'];
+}
+
+if ($adminSchoolID == -1) return;
+
+$_SESSION = [];
+
+// filter by
+$requestType = '';
+if (isset($_GET['requestType'])) {
+    $requestType = $_GET['requestType'];
+} else if (isset($_POST['requestType'])) {
+    $requestType = $_POST['requestType'];
+}
+$requestTypeLower = strtolower($requestType);
+$whereType =  '';
+if ($requestTypeLower == 'resource') {
+    $whereType = "`type`<>'tutorial' AND ";
+} else if ($requestTypeLower == 'tutorial') {
+    $whereType = "`type`='tutorial' AND ";
+}
+
+// search
+$search = '';
+if (isset($_GET['search'])) {
+    $search = $_GET['search'];
+} else if (isset($_POST['search'])) {
+    $search = $_POST['search'];
+}
+$whereSearch = '';
+if ($search != '') {
+    $whereSearch = "`subjectName` LIKE '%$search%' OR `type` LIKE '%$search%' AND ";
+}
+
+$query = "SELECT `id`, `subjectID`, `subjectName`, `requestDate`, IF(`proposedDate` IS NULL, NULL, DATE_FORMAT(`proposedDate`, '%Y-%m-%d-%H:%i:%s')) AS `proposedDate`, `quantity`, `description`, `status`, `type` FROM `requests` 
+WHERE $whereType $whereSearch `schoolID`=$adminSchoolID;";
+
+$temp = $db->query($query);
+if (!$temp) {
+    array_push($errors,  $query);
+} else {
+    foreach ($temp as $row) {
+        $r;
+        foreach ($row as $key => $value) {
+            $r["$key"] = mysqli_real_escape_string($db, $value);
+        }
+        $myJSON = json_encode($r);
+        array_push($_SESSION, $myJSON);
+    }
+}
+
+
+function mapper($cell, $callback)
+{
+    $result = array();
+    foreach ($cell as $key => $value) {
+        $result[] = $callback($key, $value);
+    }
+    return $result;
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="UTF-8">
@@ -6,353 +88,142 @@
 <!-- CSS only -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="">
-<style>
-</style>
-<script src=""></script>
+<link rel="stylesheet" href="style.css">
+<script type="text/javascript">
+    function preventBack() {
+        // var d = document.referrer;
+        // console.log(1111, d);
+        // if (d === 'http://localhost/b2000382/' || d.indexOf('index.php') > -1)
+        window.history.forward();
+    }
+    preventBack();
+    // setTimeout("preventBack()", 0);
+    window.onunload = function() {
+        null
+    };
+</script>
+
 <body>
-
-<div class="container">
-    
-    <h1>Requests</h1>
-    
-</div>
-<div class="container">
-        <div class="card">
-            <div class="card-header">
-            Featured
+    <div class="fixed-top" style="display: grid;">
+        <!-- navbar -->
+        <nav class="navbar navbar-expand-lg bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand text-light " href="#">VMS</a><span class="breadcrumb-content">&gt; Requests</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"></li>
+                    </ul>
+                    <form method="post" action="index.php" class="d-flex">
+                        <input class="form-control d-none" id="logout" name="logout" />
+                        <?php include('adminDashboardButton.php') ?>
+                        <button type="submit" class="btn btn-dark">Logout</button>
+                    </form>
+                </div>
             </div>
+        </nav>
+
+        <!-- second nav for filtering -->
+        <nav class="navbar navbar-expand-lg bg-light">
             <div class="container">
-            <div class="card-body">
-            <h5 class="card-title">Request 1: Laptop</h5>
 
-            <?php
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarScroll">
+                    <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
 
-            $schoolID = "YA111";
-            echo "Schoo ID: $schoolID";
-            echo "<br>";
-            
-            $schoolName = "Kolej Tingkatan Enam";
-            echo "School Name: $schoolName";
-            echo "<br>";
-            
-            $city = "Petaling Jaya";
-            echo "City: $city";
-            echo "<br>";
+                        <li class="nav-item">
+                            <a class="nav-link disabled ps-4">Filter By:</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle ps-0 pb-0" style="color: #000!important;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Request Type
+                            </a>
 
-            $requestID = "B1801";
-            echo "Request ID: $requestID";
-            echo "<br>";
-
-            $requestDate = "6/10/2022";
-            echo "Request Date is on $requestDate";
-            echo "<br>";
-
-            $description = "With RAM 16GB";
-            echo "Description: $description";
-            echo "<br>";
-
-            $resourceType = "Machine";
-            echo "Resource Type: $resourceType";
-            echo "<br>";
-
-            $numRequired = "10";
-            echo "Number Required: $numRequired";
-            echo "<br>";
-
-            $status = "NEW";
-            echo "Status: $status";
-            echo "<br>";
-
-            ?>
-
-            <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
+                            <?php
+                            $activeTutorial = '';
+                            $activeResource = '';
+                            if ($requestType == 'Tutorial') {
+                                $activeTutorial = 'active';
+                                $activeResource = '';
+                            } else  if ($requestType == 'Resource') {
+                                $activeTutorial = '';
+                                $activeResource = 'active';
+                            }
+                            echo "<ul class='dropdown-menu'><li><form class='d-flex'>
+                                    <input class='form-control d-none' name='requestType' value='Tutorial'>
+                                    <input class='form-control d-none' name='adminFullname' value='$adminFullname'>
+                                    <input class='form-control d-none' name='schoolName' value='$schoolName'>
+                                    <input class='form-control d-none' name='adminSchoolID' value='$adminSchoolID'>
+                                    <input class='form-control d-none' name='position' value='$position'>
+                                    <button class='dropdown-item $activeTutorial' type='submit'>Tutorial</button></form></li>
+                                    <li><form class='d-flex'>
+                                    <input class='form-control d-none' name='requestType' value='Resource'>
+                                    <input class='form-control d-none' name='adminFullname' value='$adminFullname'>
+                                    <input class='form-control d-none' name='schoolName' value='$schoolName'>
+                                    <input class='form-control d-none' name='adminSchoolID' value='$adminSchoolID'>
+                                    <input class='form-control d-none' name='position' value='$position'>
+                                    <button class='dropdown-item $activeResource' type='submit'>Resource</button></form></li>
+                                    <li><hr class='dropdown-divider' style='width: 100%;'></li>
+                                    <li><form class='d-flex'>
+                                    <input class='form-control d-none' name='requestType' value=''>
+                                    <input class='form-control d-none' name='adminFullname' value='$adminFullname'>
+                                    <input class='form-control d-none' name='schoolName' value='$schoolName'>
+                                    <input class='form-control d-none' name='adminSchoolID' value='$adminSchoolID'>
+                                    <input class='form-control d-none' name='position' value='$position'>
+                                    <button class='dropdown-item' type='submit'>Clear</button></form></li></ul>
+                                    <div id='filterByRequestType' style='font-size: .875em; color: #6c757d;'>$requestType</div>";
+                            ?>
+                        </li>
+                    </ul>
+                    <?php
+                    echo "<form class='d-flex' role='search'>
+                        <input class='form-control d-none' name='adminFullname' value='$adminFullname'>
+                        <input class='form-control d-none' name='schoolName' value='$schoolName'>
+                        <input class='form-control d-none' name='adminSchoolID' value='$adminSchoolID'>
+                        <input class='form-control d-none' name='position' value='$position'>
+                        <input class='form-control me-2' type='search' name='search' placeholder='Search' aria-label='Search' value='$search'>
+                        <button class='btn btn-outline-success' type='submit'>Search</button>
+                    </form>";
+                    ?>
+                </div>
             </div>
-        </div>
-        <br>
-        <hr>
-        <br>
-        <div class="card">
-            <div class="card-header">
-            Featured
-            </div>
-            <div class="card-body">
-            <h5 class="card-title">Request 2: Tutorial for Number Bases</h5>
-
-            <?php
-
-            $schoolID = "NA222";
-            echo "School ID: $schoolID";
-            echo "<br>";
-            
-            $schoolName = "Sri Sempurna International School";
-            echo "School Name: $schoolName";
-            echo "<br>";
-            
-            $city = "Kuala Lumpur";
-            echo "City: $city";
-            echo "<br>";
-
-            $requestID = "B1936";
-            echo "Request ID: $requestID";
-            echo "<br>";
-
-            $requestDate = "8/10/2022";
-            echo "Request Date is on $requestDate";
-            echo "<br>";
-
-            $status = "NEW";
-            echo "Status: $status";
-            echo "<br>";
-
-            $description = "Solution within 1 minute for Number Bases";
-            echo "Description: $description";
-            echo "<br>";
-
-            $proposedDate = "9/10/2022";
-            echo "Proposed Date: $proposedDate";
-            echo "<br>";
-            
-            $proposedTime = "08:00AM";
-            echo "Proposed Time: $proposedTime";
-            echo "<br>";
-            
-            $studentLevel = "C";
-            echo "Student Level: $studentLevel";
-            echo "<br>";
-
-            $numStudents = "12";
-            echo "Number of Students: $numStudents";
-            echo "<br>";
-
-            ?>
-            <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
-            </div>
-        </div>
-        <br>
-        <hr>
-        <br>
-        <div class="card">
-            <div class="card-header">
-            Featured
-            </div>
-            <div class="container">
-            <div class="card-body">
-            <h5 class="card-title">Request 3: Books </h5>
-
-            <?php
-
-            $schoolID = "VI333";
-            echo "Schoo ID: $schoolID";
-            echo "<br>";
-            
-            $schoolName = "SMK Tropicana";
-            echo "School Name: $schoolName";
-            echo "<br>";
-            
-            $city = "Petaling Jaya";
-            echo "City: $city";
-            echo "<br>";
-
-            $requestDate = "11/10/2022";
-            echo "Request Date is on $requestDate";
-            echo "<br>";
-
-            $description = "Dictionaries, Sejarah";
-            echo "Description: $description";
-            echo "<br>";
-
-            $resourceType = "TextBooks";
-            echo "Resource Type: $resourceType";
-            echo "<br>";
-
-            $numRequired = "20";
-            echo "Number Required: $numRequired";
-            echo "<br>";
-
-            $status = "NEW";
-            echo "Status: $status";
-            echo "<br>";
-            
-            ?>
-            <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
-            </div>
-        </div>
-        <br>
-        <hr>
-        <br>
-        <div class="card">
-            <div class="card-header">
-            Featured
-            </div>
-            <div class="card-body">
-            <h5 class="card-title">Request 4: Tutorial for English Essay</h5>
-            
-            <?php
-
-            $schoolID = "SE444";
-            echo "School ID: $schoolID";
-            echo "<br>";
-            
-            $schoolName = "SMK Tinggi Klang";
-            echo "School Name: $schoolName";
-            echo "<br>";
-            
-            $city = "Klang";
-            echo "City: $city";
-            echo "<br>";
-
-            $requestID = "C0123";
-            echo "Request ID: $requestID";
-            echo "<br>";
-
-            $requestDate = "13/10/2022";
-            echo "Request Date is on $requestDate";
-            echo "<br>";
-
-            $status = "NEW";
-            echo "Status: $status";
-            echo "<br>";
-
-            $description = "Easiest methods for writing an English's eaasy";
-            echo "Description: $description";
-            echo "<br>";
-
-            $proposedDate = "15/10/2022";
-            echo "Proposed Date: $proposedDate";
-            echo "<br>";
-            
-            $proposedTime = "010:00AM";
-            echo "Proposed Time: $proposedTime";
-            echo "<br>";
-            
-            $studentLevel = "C-";
-            echo "Student Level: $studentLevel";
-            echo "<br>";
-
-            $numStudents = "18";
-            echo "Number of Students: $numStudents";
-            echo "<br>";
-            ?>
-            <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
-            </div>
-        </div>
-        <br>
-        <hr>
-        <br>
-        <div class="card">
-            <div class="card-header">
-            Featured
-            </div>
-            <div class="container">
-            <div class="card-body">
-            <h5 class="card-title">Request 5: Mobile</h5>
-            
-            <?php
-
-            $schoolID = "MA555";
-            echo "Schoo ID: $schoolID";
-            echo "<br>";
-            
-            $schoolName = "SMK Selayang Bharu";
-            echo "School Name: $schoolName";
-            echo "<br>";
-            
-            $city = "Selayang Bharu";
-            echo "City: $city";
-            echo "<br>";
-
-            $requestDate = "15/10/2022";
-            echo "Request Date is on $requestDate";
-            echo "<br>";
-
-            $description = "Install apps for taking virtual class notes";
-            echo "Description: $description";
-            echo "<br>";
-
-            $resourceType = "Software";
-            echo "Resource Type: $resourceType";
-            echo "<br>";
-
-            $numRequired = "15";
-            echo "Number Required: $numRequired";
-            echo "<br>";
-
-            $status = "NEW";
-            echo "Status: $status";
-            echo "<br>";
-
-            ?>
-            
-            <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
-            </div>
-        </div>
-        <br>
-        <hr>
-        <br>
-        <div class="card">
-            <div class="card-header">
-            Featured
-            </div>
-            <div class="card-body">
-            <h5 class="card-title">Request 6: Tutorial for Learn Piano</h5>
-            
-            <?php
-
-            $schoolID = "EL666";
-            echo "School ID: $schoolID";
-            echo "<br>";
-            
-            $schoolName = "SMK Seafield";
-            echo "School Name: $schoolName";
-            echo "<br>";
-            
-            $city = "Subang Jaya";
-            echo "City: $city";
-            echo "<br>";
-
-            $requestID = "DC1R3";
-            echo "Request ID: $requestID";
-            echo "<br>";
-
-            $requestDate = "15/10/2022";
-            echo "Request Date is on $requestDate";
-            echo "<br>";
-
-            $status = "NEW";
-            echo "Status: $status";
-            echo "<br>";
-
-            $description = "Extra-curicular activity";
-            echo "Description: $description";
-            echo "<br>";
-
-            $proposedDate = "19/10/2022";
-            echo "Proposed Date: $proposedDate";
-            echo "<br>";
-            
-            $proposedTime = "09:30AM";
-            echo "Proposed Time: $proposedTime";
-            echo "<br>";
-            
-            $studentLevel = "B";
-            echo "Student Level: $studentLevel";
-            echo "<br>";
-
-            $numStudents = "15";
-            echo "Number of Students: $numStudents";
-            echo "<br>";
-            ?>
-            <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
-            </div>
-        </div>
+        </nav>
     </div>
-</div>
+    <div class="container" style="margin-top: 117px; margin-bottom: 10px">
+        <?php include('adminInfo.php') ?>
+        <div class="row" id="cards">
+            <?php if ($_SESSION) : ?>
+                <?php foreach ($_SESSION as $row) : ?>
+                    <div class="col-sm-4 mt-3 data" data=<?php echo
+                                                            $row;
+                                                            ?>>
+                        <div class="card">
+                            <div class="card-body">
+                                <?php
+                                $r = json_decode($row);
+                                echo "<h5 class='card-title'>Request ($r->id)</h5>";
+                                $t = $r->type == "tutorial" ? "warning" : "primary";
+                                echo "<div class='key-value'><div class='fw-bold'>Type</div><div class='fw-bold text-$t'>$r->type</div></div>";
+                                echo "<div class='key-value'><div>Status</div><div class='fw-bold text-danger'>$r->status</div></div>";
+                                echo "<div class='key-value'><div>Subject ID</div><div>$r->subjectID</div></div>";
+                                echo "<div class='key-value'><div>Subject Name</div><div>$r->subjectName</div></div>";
+                                echo "<div class='key-value'><div>Request Date</div><div>$r->requestDate</div></div>";
+                                echo "<div class='key-value'><div>Proposed Date</div><div>$r->proposedDate</div></div>";
+                                echo "<div class='key-value'><div>Quantity</div><div>$r->quantity</div></div>";
+                                echo "<div class='key-value'><div>Description</div><div>$r->description</div></div>";
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach ?>
+            <?php endif ?>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+        <script src="functions.js"></script>
 </body>
+
 </html>

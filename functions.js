@@ -42,15 +42,39 @@ function validateControls() {
             c.on("change paste keyup", function() {    
                 c = $(this);
                 if (c.val() && c.val().trim().length > 0) {
-                    if(c.attr("id") === "type" && c.val().toLowerCase() === "tutorial"){
-                        c.addClass("is-invalid");
-                        c.removeClass("is-valid");
-                        c.val(""); 
+                    // validate Type 
+                    // tutorial is not alowed
+                    if(c.attr("id") === "type") {
+                        if(c.val().toLowerCase() === "tutorial"){
+                            c.addClass("is-invalid");
+                            c.removeClass("is-valid");
+                            c.val(""); 
+                        } else {
+                            c.addClass("is-valid");
+                            c.removeClass("is-invalid"); 
+                        }
+                    } else if(c.attr("id") === "proposedDate") {
+                        // proposed date must not be before today
+                        var pd = new Date(c.val());
+                        var now = new Date();
+                        var p = new Date(pd.toLocaleDateString("en-US"));
+                        var n = new Date(now.toLocaleDateString("en-US"));
+                        if(p < n){
+                            c.addClass("is-invalid");
+                            c.removeClass("is-valid");
+                            c.val(""); 
+                        } else {
+                            c.addClass("is-valid");
+                            c.removeClass("is-invalid"); 
+                        }
                     } else {
+                        // valid value is provided
                         c.addClass("is-valid");
                         c.removeClass("is-invalid"); 
                     }
                 } else {
+                    // value is required
+                    // must not be empty
                     c.addClass("is-invalid");
                     c.removeClass("is-valid");
                 }

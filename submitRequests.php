@@ -1,5 +1,6 @@
 <?php
 $errors = [];
+$success = false;
 $_SESSION = [];
 
 // populate the db user & pass based on your db account
@@ -16,7 +17,7 @@ if (isset($_GET['adminSchoolID'])) {
     $schoolName = $_GET['schoolName'];
     $adminSchoolID = $_GET['adminSchoolID'];
 }
-
+//break, if there is no school admin ID
 if ($adminSchoolID == -1) return;
 
 if (isset($_POST['registerResource'])) {
@@ -38,7 +39,7 @@ if (isset($_POST['registerResource'])) {
         $type = mysqli_real_escape_string($db, $_POST['type']);
         $quantity = mysqli_real_escape_string($db, $_POST['quantity']);
         $description = mysqli_real_escape_string($db, $_POST['description']);
-        $status = 'p';
+        $status = 'NEW';
 
         $query = "SELECT `id` FROM `requests` WHERE 
                     `quantity`=$quantity AND
@@ -51,11 +52,15 @@ if (isset($_POST['registerResource'])) {
             array_push($errors,  $db->error);
         } else {
             $row = $temp->fetch_row();
+            // if resource information does not already exist in db proceed to insert
             if ($row == null) {
                 $query = "REPLACE INTO `requests` (`quantity`, `description`, `status`, `type`, `schoolID`) 
             VALUES($quantity, '$description', '$status', '$type', $adminSchoolID);";
                 if (!$db->query($query)) {
                     array_push($errors,  $db->error);
+                    $success = false;
+                } else {
+                    $success = true;
                 }
             }
         }
@@ -91,7 +96,7 @@ if (isset($_POST['registerResource'])) {
         $proposedTime = mysqli_real_escape_string($db, $_POST['proposedTime']);
         $quantity = mysqli_real_escape_string($db, $_POST['quantity']);
         $description = mysqli_real_escape_string($db, $_POST['description']);
-        $status = 'p';
+        $status = 'NEW';
 
         $query = "SELECT `id` FROM `requests` WHERE 
                     `subjectID`=$subjectID AND
@@ -105,26 +110,28 @@ if (isset($_POST['registerResource'])) {
             array_push($errors,  $query);
         } else {
             $row = $temp->fetch_row();
+            // if tutorial information does not already exist in db proceed to insert
             if ($row == null) {
                 $query = "REPLACE INTO `requests` (`subjectID`, `subjectName`, `proposedDate`, `quantity`, `description`, `status`, `type`, `schoolID`) 
                             VALUES($subjectID, '$subjectName', '$proposedDate $proposedTime', $quantity, '$description', '$status', 'tutorial', $adminSchoolID);";
                 if (!$db->query($query)) {
                     array_push($errors,  $db->error);
+                    $success = false;
+                } else {
+                    $success = true;
                 }
             }
         }
     }
 }
 
-
-if (count($errors) == 0) {
-    $_SESSION = [];
-    $query = "SELECT `id`, `subjectID`, `subjectName`, `requestDate`, `proposedDate`, `quantity`, `description`, `status`, `type` FROM `requests` WHERE `schoolID` = $adminSchoolID;";
-    $results = mysqli_query($db, $query);
-
-    if (mysqli_num_rows($results) > 0) {
-        $_SESSION = $results; //->fetch_array(MYSQLI_ASSOC);
-    }
+// first clearing the session
+$_SESSION = [];
+$query = "SELECT `id`, `subjectID`, `subjectName`, `requestDate`, `proposedDate`, `quantity`, `description`, `status`, `type` FROM `requests` WHERE `schoolID` = $adminSchoolID;";
+$results = mysqli_query($db, $query);
+// if query was not empty put it in the session 
+if (mysqli_num_rows($results) > 0) {
+    $_SESSION = $results; //->fetch_array(MYSQLI_ASSOC);
 }
 
 ?>
@@ -136,13 +143,21 @@ if (count($errors) == 0) {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous" />
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-<script src="functions.js"></script>
+<script type="text/javascript">
+    function preventBack() {
+        window.history.forward();
+    }
+    preventBack();
+    window.onunload = function() {
+        null
+    };
+</script>
 
 <body id="subReq">
     <!------------- nav bar ---------------->
     <nav class="navbar fixed-top navbar-expand-lg bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand text-light " href="#">VMS</a>
+            <a class="navbar-brand text-light " href="#">VMS</a><span class="breadcrumb-content">&gt; Requests</span>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -152,21 +167,15 @@ if (count($errors) == 0) {
                 </ul>
                 <form method="post" action="index.php" class="d-flex">
                     <input class="form-control d-none" id="logout" name="logout" />
-                    <?php
-                    if (isset($_GET['adminFullname']) && isset($_GET['schoolName'])) {
-                        $adminFullname = $_GET['adminFullname'];
-                        $schoolName = $_GET['schoolName'];
-                        $schoolID = $_GET['adminSchoolID'];
-                        echo "<a href='adminDashboard.php?adminFullname=$adminFullname&schoolName=$schoolName&adminSchoolID=$schoolID' class='btn btn-success mx-3'>Dashboard</a>";
-                    }
-                    ?>
-                    <button type="submit" class="btn btn-primary">Logout</button>
+                    <?php include('adminDashboardButton.php') ?>
+                    <button type="submit" class="btn btn-dark">Logout</button>
                 </form>
             </div>
         </div>
     </nav>
     <!------------------ end of navbar ------------------------->
     <div class="container mt-5 pt-5">
+        <?php include('adminInfo.php') ?>
         <div class="mb-5">
             <p>
                 <button type="button" class="btn btn-outline-secondary" href="#addNewTut" role="button" aria-expanded="false" onclick="toggleAddNewTut()">
@@ -177,11 +186,12 @@ if (count($errors) == 0) {
                 </button>
 
                 <?php include('errors.php'); ?>
+                <?php include('success.php'); ?>
 
             </p>
             <div class="collapse" id="addNewTut">
                 <div class="card card-body">
-                    <form class="needs-validation" novalidate method="post" <?php echo "action='submitRequests.php?adminFullname=$adminFullname&schoolName=$schoolName&adminSchoolID=$adminSchoolID'" ?>>
+                    <form class="needs-validation" novalidate method="post" <?php echo "action='submitRequests.php?adminFullname=$adminFullname&schoolName=$schoolName&adminSchoolID=$adminSchoolID&position=$position'" ?>>
                         <div class="container mb-4">
                             <div class="row align-items-start">
                                 <!-- tutorial session Information -->
@@ -250,10 +260,10 @@ if (count($errors) == 0) {
                     </form>
                 </div>
             </div>
-
+            <!----------------------- resource request form --------------------->
             <div class="collapse" id="addNewRes">
                 <div class="card card-body">
-                    <form class="needs-validation" novalidate method="post" <?php echo "action='submitRequests.php?adminFullname=$adminFullname&schoolName=$schoolName&adminSchoolID=$adminSchoolID'" ?>>
+                    <form class="needs-validation" novalidate method="post" <?php echo "action='submitRequests.php?adminFullname=$adminFullname&schoolName=$schoolName&adminSchoolID=$adminSchoolID&position=$position'" ?>>
                         <div class="container mb-4">
                             <div class="row align-items-start">
                                 <!-- resource  Information -->
@@ -265,10 +275,13 @@ if (count($errors) == 0) {
                                             <div class="valid-feedback">
                                                 Looks good!
                                             </div>
+                                            <div class="invalid-feedback">
+                                                type is required and should not be "tutorial"
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="resNum">RequiredNumber</label>
+                                            <label for="resNum">Required Number</label>
                                             <input type="number" class="form-control" id="quantity" name="quantity" required />
                                             <div class="valid-feedback">
                                                 Looks good!
@@ -297,10 +310,9 @@ if (count($errors) == 0) {
                 </div>
             </div>
         </div>
-        <!----------------------- resource request form --------------------->
 
         <!-- table -->
-        <div class="col-sm-10">
+        <div class="col-sm-10" style="width: 100%;">
             <?php if ($_SESSION) : ?>
                 <table class="table" id="requests">
                     <thead>
@@ -331,6 +343,7 @@ if (count($errors) == 0) {
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="functions.js"></script>
 </body>
 
 </html>
