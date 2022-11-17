@@ -103,7 +103,7 @@ function mapper($cell, $callback)
     };
 </script>
 
-<body>
+<body id="vreq">
     <div class="fixed-top" style="display: grid;">
         <!-- navbar -->
         <nav class="navbar navbar-expand-lg bg-dark">

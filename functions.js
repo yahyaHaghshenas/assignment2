@@ -2,6 +2,7 @@
 $(function() {    
     $(document).ready(function() {
         validateControls();
+        $('#submitButton').addClass('disabled');
     });
 });
 
@@ -35,7 +36,7 @@ function toggleAddNewRes() {
 
 
 function validateControls() {
-    var controls = $(".form-control");
+    var controls = $("#subReq .form-control, #registerSchool .form-control");
     if (controls && controls.length > 0) {
         controls.each(index => {
             var c = $(controls[index]);
@@ -67,11 +68,20 @@ function validateControls() {
                             c.addClass("is-valid");
                             c.removeClass("is-invalid"); 
                         }
-                    } else {
+                    } else if (c.attr('type') === 'email') {
+                        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(c.val())) {
+                            c.addClass("is-valid");
+                            c.removeClass("is-invalid"); 
+                        } else {
+                            c.addClass("is-invalid");
+                            c.removeClass("is-valid");
+                        }
+                    } else if (['adminPassword', 'confirmAdminPassword'].indexOf(c.attr('id')) === -1) {
                         // valid value is provided
                         c.addClass("is-valid");
                         c.removeClass("is-invalid"); 
-                    }
+                    } 
+                    toggleSubmitButton();
                 } else {
                     // value is required
                     // must not be empty
@@ -146,3 +156,38 @@ function sortBy(key) {
     }
     
 }
+
+function toggleSubmitButton() {
+    var adminEmail = $('#adminEmail').hasClass('is-valid');
+    var adminPassword = $('#adminPassword').hasClass('is-valid');
+    var confirmAdminPassword = $('#confirmAdminPassword').hasClass('is-valid');
+    if (adminEmail && adminPassword && confirmAdminPassword) {
+        $('#submitButton').removeClass('disabled');
+    } else {
+        $('#submitButton').removeClass('disabled');
+        $('#submitButton').addClass('disabled');
+    }
+}
+
+// password confirmation
+$('#adminUpdateForm #adminPassword, #adminUpdateForm #confirmAdminPassword').on('keyup', function () {
+    if ($('#adminPassword').val() === $('#confirmAdminPassword').val()) {
+        $('#adminPassword').addClass("is-valid");
+        $('#confirmAdminPassword').addClass("is-valid");
+        $('#confirmAdminPassword').removeClass("is-invalid");
+    } else {
+        $('#confirmAdminPassword').addClass("is-invalid");
+        $('#confirmAdminPassword').removeClass("is-valid");
+    }
+  });
+
+  $('#registerSchool #adminPassword, #registerSchool #confirmAdminPassword').on('keyup', function () {
+    if ($('#adminPassword').val() === $('#confirmAdminPassword').val()) {
+        $('#adminPassword').addClass("is-valid");
+        $('#confirmAdminPassword').addClass("is-valid");
+        $('#confirmAdminPassword').removeClass("is-invalid");
+    } else {
+        $('#confirmAdminPassword').addClass("is-invalid");
+        $('#confirmAdminPassword').removeClass("is-valid");
+    }
+  });

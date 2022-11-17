@@ -83,7 +83,7 @@ if (isset($_POST['login'])) {
 
         <a href="viewAllRequests.php" class="btn btn-success mx-3">View Requsts</a>
         <form method="post" action="index.php" class="d-flex">
-          <input type="text" class="form-control me-2 " id="adminEmail" name="adminEmail" placeholder="Email" value="john@help.my" />
+          <input type="text" class="form-control me-2 " id="adminEmail" name="adminEmail" placeholder="Email" />
           <input type="password" class="form-control me-2 passtrength" id="password" name="password" placeholder="********" />
       </div>
 
@@ -100,7 +100,7 @@ if (isset($_POST['login'])) {
   <!-- welcome -->
   <div class="container">
     <div class="h1 py-2 pb-2 pt-5 mt-4 mb-4 border-bottom border-ligth">
-      Welcome to Volunteers Mangement System
+      Volunteers Mangement System
     </div>
   </div>
   <!-- Volunteer form -->
@@ -244,8 +244,8 @@ if (isset($_POST['login'])) {
 
     <!-- Copyright -->
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-      © 2021 Copyright:
-      <a class="text-reset fw-bold" href="https://mdbootstrap.com/">HELPUNIVERSITY</a>
+      © 2022 Copyright:
+      <a class="text-reset fw-bold" href="#">HELP UNIVERSITY</a>
     </div>
     <!-- Copyright -->
   </footer>

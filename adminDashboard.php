@@ -24,7 +24,7 @@ if (isset($_POST['logout'])) {
     };
 </script>
 
-<body>
+<body id="admdsh">
 
     <!------------- nav bar ---------------->
     <nav class="navbar fixed-top navbar-expand-lg bg-dark ">
@@ -107,6 +107,8 @@ if (isset($_POST['logout'])) {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <!-- viewRequests -->
                 <div class="col-sm-4 mt-3">
                     <div class="card">
@@ -123,7 +125,7 @@ if (isset($_POST['logout'])) {
                         <div class="card-body">
                             <h5 class="card-title">View Offers</h5>
                             <p class="card-text">You can see the listt of offers that already has been made for your requests</p>
-                            <?php echo "<a href='$viewOffersUrl' class='btn btn-primary'>Submit</a>" ?>
+                            <?php echo "<a href='$viewOffersUrl' class='btn btn-primary'>View</a>" ?>
                         </div>
                     </div>
                 </div>

@@ -97,7 +97,6 @@ if (isset($_POST['update'])) {
         </div> -->
         <!-- add new -->
         <div class="mb-5">
-            <?php echo $query; ?>
             <?php include('errors.php'); ?>
             <?php if ($success) : ?>
                 <div class="alert alert-success">
@@ -110,7 +109,7 @@ if (isset($_POST['update'])) {
 
                     <?php $adminUpdateUrl = "adminUpdate.php?adminFullname=$adminFullname&schoolName=$schoolName&adminSchoolID=$adminSchoolID&position=$position"; ?>
 
-                    <form method="post" action="<?php $adminUpdateUrl ?>">
+                    <form method="post" id="adminUpdateForm" action="<?php $adminUpdateUrl ?>">
                         <div class="container mb-4">
                             <div class="row align-items-start">
 
@@ -167,6 +166,8 @@ if (isset($_POST['update'])) {
             </div>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="functions.js"></script>
 </body>
 
 </html>

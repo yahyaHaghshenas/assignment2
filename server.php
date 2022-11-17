@@ -64,7 +64,7 @@ if (isset($_POST['register'])) {
 		$id = mysqli_insert_id($db);
 	}
 	if ($id == 0) {
-		array_push($errors, $schoolName . " has been already registered! ($schoolAddress)");
+		// array_push($errors, $schoolName);
 	} else {
 		// ____________ admin ____________
 		$password = mysqli_real_escape_string($db, $_POST['adminPassword']);

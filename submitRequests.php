@@ -157,7 +157,7 @@ if (mysqli_num_rows($results) > 0) {
     <!------------- nav bar ---------------->
     <nav class="navbar fixed-top navbar-expand-lg bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand text-light " href="#">VMS</a><span class="breadcrumb-content">&gt; Requests</span>
+            <a class="navbar-brand text-light " href="#">VMS</a><span class="breadcrumb-content">&gt; Submit Requests</span>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -312,7 +312,7 @@ if (mysqli_num_rows($results) > 0) {
         </div>
 
         <!-- table -->
-        <div class="col-sm-10" style="width: 100%;">
+        <div class="col-sm-10" style="width: 85%;">
             <?php if ($_SESSION) : ?>
                 <table class="table" id="requests">
                     <thead>

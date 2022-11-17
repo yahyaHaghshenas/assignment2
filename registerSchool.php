@@ -57,7 +57,7 @@
             </p>
             <div class="collapse" id="addNew">
                 <div class="card card-body">
-                    <form method="post" action="registerSchool.php">
+                    <form id="registerSchool" class="needs-validation" novalidate method="post" action="registerSchool.php">
                         <div class="container mb-4">
                             <div class="row align-items-start">
                                 <!-- School Information -->
@@ -68,16 +68,25 @@
                                         <div class="mb-3">
                                             <label for="schoolName" class="form-label">Name</label>
                                             <input type="text" class="form-control" id="schoolName" name="schoolName" placeholder="Write school name" />
+                                            <div class="valid-feedback">
+                                                Looks good!
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="address">Address</label>
                                             <input type="text" class="form-control" id="address" name="address" placeholder="Write full address" />
+                                            <div class="valid-feedback">
+                                                Looks good!
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="city">City</label>
                                             <input type="text" class="form-control" id="city" name="city" placeholder="Write city" />
+                                            <div class="valid-feedback">
+                                                Looks good!
+                                            </div>
                                         </div>
                                         <!-- </form> -->
                                     </div>
@@ -85,12 +94,15 @@
 
                                 <!-- Admin Information -->
                                 <div class="col">
-                                    <div id="adminInfo">
+                                    <div id="schoolInfo">
                                         <h3 class="mt-3">Admin Information</h3>
                                         <!-- <form class="row"> -->
                                         <div class="mb-3">
                                             <label for="adminFullname" class="form-label">Full Name</label>
                                             <input type="text" class="form-control" id="adminFullname" name="adminFullname" placeholder="Write full name" />
+                                            <div class="valid-feedback">
+                                                Looks good!
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
@@ -99,23 +111,40 @@
                                         </div>
 
                                         <div class="mb-3">
+                                            <label for="confirmAdminPassword">Confirm Password</label>
+                                            <input type="password" class="form-control" id="confirmAdminPassword" name="confirmAdminPassword" placeholder="********" />
+                                        </div>
+
+                                        <div class="mb-3">
                                             <label for="staffID">Staff ID</label>
                                             <input type="text" class="form-control" id="staffID" name="staffID" placeholder="Write Staff ID" />
+                                            <div class="valid-feedback">
+                                                Looks good!
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="position">Position</label>
                                             <input type="text" class="form-control" id="position" name="position" placeholder="Write Position" />
+                                            <div class="valid-feedback">
+                                                Looks good!
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="adminPhone">Phone</label>
                                             <input type="phone" class="form-control" id="adminPhone" name="adminPhone" placeholder="0172552525" />
+                                            <div class="valid-feedback">
+                                                Looks good!
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="adminEmail">Email</label>
-                                            <input type="email" class="form-control" id="adminEmail" name="adminEmail" placeholder="example@domain.com" />
+                                            <input type="email" class="form-control" id="adminEmail" name="adminEmail" placeholder="example@domain.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" />
+                                            <div class="valid-feedback">
+                                                Looks good!
+                                            </div>
                                         </div>
                                         <!-- </form> -->
                                     </div>
@@ -125,9 +154,7 @@
 
                         <input class="form-control d-none" id="register" name="register" />
 
-                        <button type="submit" class="btn btn-primary btn-lg" id="register">
-                            Submit
-                        </button>
+                        <button type='submit' class='btn btn-primary btn-lg' id='submitButton'>Submit</button>
                     </form>
                 </div>
             </div>
@@ -163,6 +190,8 @@
             <?php endif ?>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="functions.js"></script>
 </body>
 
 </html>

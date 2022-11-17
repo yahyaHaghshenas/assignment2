@@ -72,7 +72,7 @@ function mapper($cell, $callback)
     };
 </script>
 
-<body>
+<body id="vOffer">
     <div class="fixed-top" style="display: grid;">
         <!-- navbar -->
         <nav class="navbar navbar-expand-lg bg-dark">
@@ -94,54 +94,8 @@ function mapper($cell, $callback)
             </div>
         </nav>
 
-        <!-- second nav for filtering -->
-        <nav class="navbar navbar-expand-lg bg-light">
-            <div class="container">
-                <a class="navbar-brand pe-5" style="color: #575d62!important; font-weight: bold; font-size:large!important;" href="#"><?php echo $schoolName; ?></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarScroll">
-                    <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle ps-0 pb-0" style="color: #000!important;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Sorted by
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item active" href="#" onclick="sortBy('Oldest')">Oldest</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="sortBy('Latest')">Latest</a></li>
-                                <li>
-                                    <hr class="dropdown-divider" style="width: 100%;">
-                                </li>
-                                <li><a class="dropdown-item" href="#" onclick="sortBy('Type')">Type</a></li>
-                            </ul>
-                            <div id="sortedBy" style="font-size: .875em; color: #6c757d;">Oldest</div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled ps-4">Filter By:</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle ps-0 pb-0" style="color: #000!important;" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Offer Type
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item active" href="#">Tutorial</a></li>
-                                <li><a class="dropdown-item" href="#">Service</a></li>
-                                <li>
-                                    <hr class="dropdown-divider" style="width: 100%;">
-                                </li>
-                                <li><a class="dropdown-item" href="#">Clear</a></li>
-                            </ul>
-                            <div id="filterByRequestType" style="font-size: .875em; color: #6c757d;">Tutorial</div>
-                        </li>
-                    </ul>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-                </div>
-            </div>
-        </nav>
+
+
     </div>
     <div class="container" style="margin-top: 117px; margin-bottom: 10px">
         <?php include('adminInfo.php') ?>
