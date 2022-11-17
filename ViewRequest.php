@@ -67,7 +67,29 @@
             ?>
 
             <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
+            <a href="submit.php" class="btn btn-primary">Make Offer</a>
+<?php
+            if(isset($_POST['Make']))
+{
+    $Offer = $_POST['Offer'];
+    $Status = $_POST['Status'];
+    
+        $qry = "INSERT INTO offer (Offer,Status) VALUES ('$Offer','$Status')";
+        $insert = mysqli_query($connection,$qry);
+
+        if($qry){
+            echo "done";
+            $_SESSION['success'] =  "Volunteer is Added";
+            header('Location: register.php');
+        }
+        else{
+            echo "not done";
+            $_SESSION['status'] =  "Volunteer is Not Added";
+            header('Location: register.php');
+}
+        }
+        ?>
+
             </div>
         </div>
         <br>
@@ -128,7 +150,7 @@
 
             ?>
             <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
+            <a href="submit.php" class="btn btn-primary">Make Offer</a>
             </div>
         </div>
         <br>
@@ -178,7 +200,7 @@
             
             ?>
             <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
+            <a href="submit.php" class="btn btn-primary">Make Offer</a>
             </div>
         </div>
         <br>
@@ -238,7 +260,7 @@
             echo "<br>";
             ?>
             <br>
-            <a href="#" class="btn btn-primary">Make Offer</a>
+            <a href="submit.php" class="btn btn-primary">Make Offer</a>
             </div>
         </div>
         <br>
